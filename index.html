@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>Pomodoro Timer</title>
+<style>
+  body{margin:0;background:#c0392b;display:flex;align-items:center;justify-content:center;
+    height:100vh;font-family:sans-serif;color:#fff}
+  .card{text-align:center;background:rgba(0,0,0,.2);padding:3rem 4rem;border-radius:20px}
+  h1{margin:0 0 .5rem;font-size:1.5rem;opacity:.8}
+  #phase{font-size:1rem;opacity:.6;margin-bottom:2rem}
+  #time{font-size:6rem;font-weight:700;letter-spacing:4px;margin:0 0 2rem}
+  .btns{display:flex;gap:1rem;justify-content:center}
+  button{padding:.75rem 1.5rem;border:none;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:600}
+  #start{background:#fff;color:#c0392b}
+  #reset{background:rgba(255,255,255,.2);color:#fff}
+  #skip{background:rgba(255,255,255,.2);color:#fff}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🍅 Pomodoro Timer</h1>
+  <div id="phase">Focus Time</div>
+  <div id="time">25:00</div>
+  <div class="btns">
+    <button id="start" onclick="toggle()">Start</button>
+    <button id="reset" onclick="reset()">Reset</button>
+    <button id="skip" onclick="skip()">Skip</button>
+  </div>
+</div>
+<script>
+const PHASES=[{name:'Focus Time',min:25,bg:'#c0392b'},{name:'Short Break',min:5,bg:'#27ae60'},{name:'Long Break',min:15,bg:'#2980b9'}];
+let phase=0,secs=PHASES[0].min*60,running=false,timer=null;
+function fmt(s){return`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
+function render(){document.getElementById('time').textContent=fmt(secs);document.getElementById('phase').textContent=PHASES[phase].name;document.body.style.background=PHASES[phase].bg}
+function toggle(){if(running){clearInterval(timer);running=false;document.getElementById('start').textContent='Resume'}else{timer=setInterval(()=>{if(--secs<=0){clearInterval(timer);running=false;new Audio('https://www.soundjay.com/buttons/beep-07.mp3').play().catch(()=>{});skip()}else render()},1000);running=true;document.getElementById('start').textContent='Pause'}render()}
+function reset(){clearInterval(timer);running=false;secs=PHASES[phase].min*60;document.getElementById('start').textContent='Start';render()}
+function skip(){clearInterval(timer);running=false;phase=(phase+1)%PHASES.length;secs=PHASES[phase].min*60;document.getElementById('start').textContent='Start';render()}
+render();
+</script>
+</body></html>
